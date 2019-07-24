@@ -1,8 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const shortid = require('shortid');
-
-const dbpath = path.join(__dirname, '..', 'db', 'snippets.json');
+const { readJSONFromDB, writeJSONToDB } = require('../utils/db.utils');
 
 /**
  * @typedef {Object} Snippet
@@ -24,15 +23,9 @@ const dbpath = path.join(__dirname, '..', 'db', 'snippets.json');
 
 /* Create */
 exports.insert = async ({ author, code, title, description, language }) => {
-  // read snippets
-  // grab data from the new snippet (validate)
-  // make newSnippet a proper object
-  // generate default data (id, comments, favorites)
-  // push that object into snippets
-  // write back to the file
   try {
     if (!author || !code || !title || !description || !language) throw Error('Missing Properties');
-    const snippets = JSON.parse(await fs.readFile(dbpath));
+    const snippets = await readJSONFromDB('snippets');
     snippets.push({
       id: shortid.generate(),
       author,
@@ -43,7 +36,7 @@ exports.insert = async ({ author, code, title, description, language }) => {
       comments: [],
       favorites: 0,
     });
-    await fs.writeFile(dbpath, JSON.stringify(snippets));
+    await writeJSONToDB('snippets', snippets);
     return snippets[snippets.length - 1];
   } catch (error) {
     console.error('ERORR: Snippet did not post');
@@ -53,7 +46,6 @@ exports.insert = async ({ author, code, title, description, language }) => {
 };
 
 /* Read */
-
 /**
  * Selects snippets from db.
  * Can accept optional query objects to filter results.
@@ -62,14 +54,8 @@ exports.insert = async ({ author, code, title, description, language }) => {
  */
 
 exports.select = async (query = {}) => {
-  // read the file
-  // parse the data
-  // filter snippets with query
-  // check if every query keys
-  // check if snippet[key] = query[key]
-  // return the data
   try {
-    const snippets = JSON.parse(await fs.readFile(dbpath));
+    const snippets = await readJSONFromDB('snippets');
     const filtered = snippets.filter(snippet => Object.keys(query).every(key => query[key] === snippet[key]));
     return filtered;
   } catch (error) {
@@ -79,4 +65,37 @@ exports.select = async (query = {}) => {
   }
 };
 /* Update */
+
+/**
+ *  Updates a specific ID in Snippets
+ *  @param {string} id
+ */
+
+exports.update = async (id, object) => {
+  try {
+    const snippets = await readJSONFromDB('snippets');
+    const filtered = snippets.filter(snippet => snippet.id === id);
+    const updatedSnips = Object.assign(snippets, filtered);
+    console.log(updatedSnips);
+    // return updatedSnip;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 /* Delete */
+/**
+ * Deletes a snippet with a given ID
+ * @param {string} ID
+ */
+
+exports.delete = async id => {
+  try {
+    const snippets = await readJSONFromDB('snippets');
+    const filtered = snippets.filter(snippet => snippet.id !== id);
+    return writeJSONToDB('snippets', filtered);
+  } catch (error) {
+    console.error('ERROR: Entry was not deleted', error);
+    throw error;
+  }
+};
