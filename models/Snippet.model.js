@@ -71,13 +71,22 @@ exports.select = async (query = {}) => {
  *  @param {string} id
  */
 
-exports.update = async (id, object) => {
+exports.update = async (id, newData) => {
   try {
     const snippets = await readJSONFromDB('snippets');
-    const filtered = snippets.filter(snippet => snippet.id === id);
-    const updatedSnips = Object.assign(snippets, filtered);
-    console.log(updatedSnips);
-    // return updatedSnip;
+    const updatedSnippets = snippets.map(snippet => {
+      if (snippet.id !== id) return snippet;
+      Object.keys(newData).forEach(key => {
+        if (key in snippet) {
+          snippet[key] = newData[key];
+        }
+      });
+      return snippet;
+    });
+    // const filtered = snippets.filter(snippet => snippet.id === id);
+    // const updatedSnips = Object.assign(snippets, filtered);
+    // console.log(updatedSnips);
+    return writeJSONToDB('snippets', updatedSnippets);
   } catch (error) {
     console.error(error);
   }

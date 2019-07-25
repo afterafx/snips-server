@@ -1,13 +1,9 @@
 const Snippet = require('./models/Snippet.model');
 
-async function testModels() {
+async function testSnippetUpdate() {
   try {
-    const snippets = await Snippet.select();
-    console.log(snippets);
-
-    // const snippet = await Snippet.update('GMvEmLpq3', { author: 'Kevin' });
-    // const snippet = await Snippet.delete('GMvEmLpq3');
-    console.log(snippets);
+    const snippet = await Snippet.update('6GFadX6zZ', { author: 'Kevin' });
+    console.log(snippet);
   } catch (error) {
     console.error(error);
   }
