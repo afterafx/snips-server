@@ -1,49 +1,16 @@
-const Snippet = require('./models/Snippet.model');
+const express = require('express');
+const router = require('./routes');
+const logger = require('./middleware/logger');
+const errorHandler = require('./middleware/errorHandler');
 
-async function testSnippetUpdate() {
-  try {
-    const snippet = await Snippet.update('6GFadX6zZ', { author: 'Kevin' });
-    console.log(snippet);
-  } catch (error) {
-    console.error(error);
-  }
-}
+const app = express();
 
-async function testSnippetSelect() {
-  try {
-    const snippets = await Snippet.select();
-    console.log(snippets);
-  } catch (error) {
-    console.error(error);
-  }
-}
+/* Middleware */
+app.use(express.json()); // parses request with JSON bodies
+app.use(logger);
+app.use(router);
+app.use(errorHandler);
 
-async function testSnippetInsert() {
-  try {
-    const newSnippet = await Snippet.insert({
-      author: 'Kass',
-      code: 'code code code',
-      title: 'All your base are belong to us',
-      description: 'does not compute',
-      language: 'assembly',
-    });
-    console.log(newSnippet);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-async function testSnippetDelete(id) {
-  try {
-    const snippets = await Snippet.delete(id);
-    console.log(snippets);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// testSnippetSelect();
-// testSnippetInsert();
-testSnippetDelete('6GFadX6zZ');
-
-// testModels();
+app.listen(5000, () => {
+  console.log('Server Running on Port: 5000');
+});
