@@ -42,7 +42,7 @@ exports.updateSnippet = async (req, res, next) => {
 
 exports.deleteSnippet = async (req, res, next) => {
   try {
-    const snippet = await Snippet.delete(req.parmas.id);
+    const snippet = await Snippet.delete(req.params.id);
     res.send(snippet);
   } catch (error) {
     next(error);
