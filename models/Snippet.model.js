@@ -27,10 +27,10 @@ exports.insert = async ({ author, code, title, description, language }) => {
   try {
     if (!author || !code || !title || !description || !language)
       throw new ErrorWithHttpStatus('Missing Properties', 400);
-    return await db.query(
+    return (await db.query(
       `INSERT INTO snippet (code, title, description, author, language) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [code, title, description, author, language]
-    ).rows[0];
+    )).rows[0];
     // old method
     // if (!author || !code || !title || !description || !language)
     //   throw new ErrorWithHttpStatus('Missing Properties', 400);
@@ -48,6 +48,7 @@ exports.insert = async ({ author, code, title, description, language }) => {
     // await writeJSONToDB('snippets', snippets);
     // return snippets[snippets.length - 1];
   } catch (error) {
+    console.log(error);
     if (error instanceof ErrorWithHttpStatus) throw error;
     else throw new ErrorWithHttpStatus('Database error');
   }

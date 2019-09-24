@@ -10,6 +10,7 @@ const ErrorWithHttpStatus = require('../utils/error.httpStatus.utils');
 const errorHandler = (error, req, res, next) => {
   if (error instanceof ErrorWithHttpStatus) res.status(error.status).send(error.message);
   else res.status(500).send('Server Error');
+  // console.error(error);
 };
 
 module.exports = errorHandler;
